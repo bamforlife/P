@@ -275,6 +275,12 @@ function claimDailyReward() {
     submitLeaderboardScore(totalInkPoints);
     playSuccessSound();
     checkDailyRewardStatus();
+
+    // Sync with Playgama Bridge Daily Rewards module if active
+    if (bridgeReady && window.bridge && bridge.dailyRewards && typeof bridge.dailyRewards.claimCurrentReward === 'function') {
+        bridge.dailyRewards.claimCurrentReward().catch(() => {});
+    }
+
     return true;
 }
 
@@ -330,6 +336,16 @@ function initDailyReward() {
             playClickSound();
             modal.classList.add('hidden');
         });
+    }
+
+    // Check if Playgama Bridge daily reward is already claimed today
+    if (bridgeReady && window.bridge && bridge.dailyRewards && typeof bridge.dailyRewards.getCurrentReward === 'function') {
+        bridge.dailyRewards.getCurrentReward().then(reward => {
+            if (reward === null) {
+                lastDailyRewardDate = getTodayDateString();
+                checkDailyRewardStatus();
+            }
+        }).catch(() => {});
     }
 
     // Pop up daily reward welcome on first visit of the day if unclaimed

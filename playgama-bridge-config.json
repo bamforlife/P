@@ -56,5 +56,90 @@
       "id": "leaderboard1",
       "isMain": true
     }
+  ],
+  "dailyRewards": {
+    "rewards": [
+      "10_ink",
+      "10_ink",
+      "10_ink",
+      "10_ink",
+      "10_ink",
+      "10_ink",
+      "10_ink"
+    ],
+    "cycle": true,
+    "resetOnMiss": false
+  },
+  "achievements": [
+    {
+      "id": "first_step",
+      "name": "First Steps",
+      "description": "Complete your first maze level"
+    },
+    {
+      "id": "maze_runner_5",
+      "name": "Maze Explorer",
+      "description": "Reach level 5"
+    },
+    {
+      "id": "maze_runner_10",
+      "name": "Pathfinder",
+      "description": "Reach level 10"
+    },
+    {
+      "id": "maze_runner_25",
+      "name": "Labyrinth Master",
+      "description": "Reach level 25"
+    },
+    {
+      "id": "maze_runner_50",
+      "name": "Maze Champion",
+      "description": "Reach level 50"
+    },
+    {
+      "id": "maze_runner_100",
+      "name": "Centurion",
+      "description": "Reach level 100"
+    },
+    {
+      "id": "first_brush",
+      "name": "Artistic Flair",
+      "description": "Unlock your first custom brush from the shop"
+    },
+    {
+      "id": "brush_collector",
+      "name": "Brush Collector",
+      "description": "Unlock 5 different brush styles"
+    },
+    {
+      "id": "brush_master",
+      "name": "Brush Master",
+      "description": "Unlock 10 different brush styles"
+    },
+    {
+      "id": "ink_100",
+      "name": "Ink Apprentice",
+      "description": "Accumulate 100 total ink points"
+    },
+    {
+      "id": "ink_500",
+      "name": "Ink Virtuoso",
+      "description": "Accumulate 500 total ink points"
+    },
+    {
+      "id": "ink_1000",
+      "name": "Ink Legend",
+      "description": "Accumulate 1,000 total ink points"
+    },
+    {
+      "id": "first_sketch",
+      "name": "Doodle Artist",
+      "description": "Draw a sketch in Free Draw mode"
+    },
+    {
+      "id": "daily_devotee",
+      "name": "Daily Devotee",
+      "description": "Claim a daily login ink reward"
+    }
   ]
 }
