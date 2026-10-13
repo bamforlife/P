@@ -196,6 +196,9 @@ document.getElementById('menuHomeBtn').addEventListener('click', () => {
     updateProgressData();
     document.getElementById('mainMenuScreen').classList.remove('hidden');
     showBannerSafely('bottom', 'main_menu');
+    if (typeof playMenuBGM === 'function') {
+        playMenuBGM();
+    }
 });
 
 // D-Pad Controls

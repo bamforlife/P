@@ -104,7 +104,9 @@ async function initializePlaygamaBridge() {
     }
     try {
         await Promise.race([
-            window.bridge.initialize(),
+            window.bridge.initialize({
+                configFilePath: './playgama-bridge-config.json?v=' + Date.now()
+            }),
             new Promise((_, reject) => setTimeout(() => reject(new Error('Bridge initialization timed out')), 8000))
         ]);
         bridgeReady = true;
@@ -114,10 +116,12 @@ async function initializePlaygamaBridge() {
         if (bridge.platform && typeof bridge.platform.on === 'function' && bridge.EVENT_NAME) {
             bridge.platform.on(bridge.EVENT_NAME.AUDIO_STATE_CHANGED, isEnabled => {
                 platformAudioEnabled = Boolean(isEnabled);
-                if (!platformAudioEnabled && audioCtx && audioCtx.state === 'running') {
-                    audioCtx.suspend().catch(() => {});
-                } else if (platformAudioEnabled && !platformPaused && soundEnabled && audioCtx && audioCtx.state === 'suspended') {
-                    audioCtx.resume().catch(() => {});
+                if (!platformAudioEnabled) {
+                    if (audioCtx && audioCtx.state === 'running') audioCtx.suspend().catch(() => {});
+                    if (typeof pauseAllBgm === 'function') pauseAllBgm();
+                } else if (platformAudioEnabled && !platformPaused && soundEnabled) {
+                    if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume().catch(() => {});
+                    if (typeof resumeCurrentBgm === 'function') resumeCurrentBgm();
                 }
             });
             bridge.platform.on(bridge.EVENT_NAME.PAUSE_STATE_CHANGED, isPaused => {
@@ -128,7 +132,10 @@ async function initializePlaygamaBridge() {
                     if (audioCtx && audioCtx.state === 'running') audioCtx.suspend().catch(() => {});
                 } else {
                     if (gameActive && motionStarted) startTimer();
-                    if (soundEnabled && platformAudioEnabled) startBGM();
+                    if (soundEnabled && platformAudioEnabled) {
+                        if (gameActive) startBGM();
+                        else if (typeof playMenuBGM === 'function') playMenuBGM();
+                    }
                     if (soundEnabled && platformAudioEnabled && audioCtx && audioCtx.state === 'suspended') audioCtx.resume().catch(() => {});
                 }
             });

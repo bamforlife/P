@@ -1,5 +1,5 @@
 // ==========================================
-// Paper Maze - Audio Engine (Web Audio API)
+// Paper Maze - Audio Engine (Web Audio API & BGM)
 // ==========================================
 
 let audioCtx = null;
@@ -8,6 +8,75 @@ let bgmInterval = null;
 let isBgmPlaying = false;
 let platformAudioEnabled = true;
 let platformPaused = false;
+
+// Background Audio Tracks (audio/ folder)
+let menuBgmAudio = null;
+let gameplayBgmAudio = null;
+let currentBgmMode = 'menu'; // 'menu' | 'gameplay'
+
+function initBgmTracks() {
+    if (!menuBgmAudio) {
+        menuBgmAudio = new Audio('audio/main menu (1).wav');
+        menuBgmAudio.loop = true;
+        menuBgmAudio.volume = 1.0; // 100% volume
+        menuBgmAudio.addEventListener('ended', function() {
+            this.currentTime = 0;
+            this.play().catch(() => {});
+        });
+    }
+    if (!gameplayBgmAudio) {
+        gameplayBgmAudio = new Audio('audio/gameplay.wav');
+        gameplayBgmAudio.loop = true;
+        gameplayBgmAudio.volume = 1.0; // 100% volume
+        gameplayBgmAudio.addEventListener('ended', function() {
+            this.currentTime = 0;
+            this.play().catch(() => {});
+        });
+    }
+}
+
+function playMenuBGM() {
+    currentBgmMode = 'menu';
+    if (!soundEnabled || !platformAudioEnabled || platformPaused) {
+        pauseAllBgm();
+        return;
+    }
+    initBgmTracks();
+    if (gameplayBgmAudio) {
+        gameplayBgmAudio.pause();
+    }
+    if (menuBgmAudio) {
+        menuBgmAudio.play().catch(() => {});
+    }
+}
+
+function playGameplayBGM() {
+    currentBgmMode = 'gameplay';
+    if (!soundEnabled || !platformAudioEnabled || platformPaused) {
+        pauseAllBgm();
+        return;
+    }
+    initBgmTracks();
+    if (menuBgmAudio) {
+        menuBgmAudio.pause();
+    }
+    if (gameplayBgmAudio) {
+        gameplayBgmAudio.play().catch(() => {});
+    }
+}
+
+function pauseAllBgm() {
+    if (menuBgmAudio) menuBgmAudio.pause();
+    if (gameplayBgmAudio) gameplayBgmAudio.pause();
+}
+
+function resumeCurrentBgm() {
+    if (currentBgmMode === 'gameplay') {
+        playGameplayBGM();
+    } else {
+        playMenuBGM();
+    }
+}
 
 function initAudio() {
     if (!soundEnabled || !platformAudioEnabled || platformPaused) return null;
@@ -79,6 +148,9 @@ function playSuccessSound() {
 }
 
 function startBGM() {
+    // Play gameplay background track in loop
+    playGameplayBGM();
+
     if (isBgmPlaying || !soundEnabled || !platformAudioEnabled || platformPaused) return;
     isBgmPlaying = true;
     const chords = [
@@ -104,6 +176,7 @@ function startBGM() {
 function stopBGM() {
     isBgmPlaying = false;
     if (bgmInterval) clearInterval(bgmInterval);
+    pauseAllBgm();
 }
 
 // Sound toggle UI binding
@@ -112,10 +185,38 @@ document.getElementById('soundToggleBtn').addEventListener('click', () => {
     const icon = document.getElementById('soundIcon');
     if (soundEnabled) {
         icon.className = "fa-solid fa-volume-high text-sm";
-        startBGM();
+        if (typeof gameActive !== 'undefined' && gameActive) {
+            startBGM();
+        } else {
+            playMenuBGM();
+        }
         playClickSound();
     } else {
         icon.className = "fa-solid fa-volume-xmark text-sm";
         stopBGM();
     }
 });
+
+// Autoplay unlock helper on first user gesture
+function unlockAudioOnFirstGesture() {
+    initAudio();
+    if (soundEnabled && platformAudioEnabled && !platformPaused) {
+        if (typeof gameActive !== 'undefined' && gameActive) {
+            playGameplayBGM();
+        } else {
+            playMenuBGM();
+        }
+    }
+    window.removeEventListener('click', unlockAudioOnFirstGesture);
+    window.removeEventListener('keydown', unlockAudioOnFirstGesture);
+    window.removeEventListener('touchstart', unlockAudioOnFirstGesture);
+}
+window.addEventListener('click', unlockAudioOnFirstGesture, { once: true });
+window.addEventListener('keydown', unlockAudioOnFirstGesture, { once: true });
+window.addEventListener('touchstart', unlockAudioOnFirstGesture, { once: true });
+
+// Expose globally
+window.playMenuBGM = playMenuBGM;
+window.playGameplayBGM = playGameplayBGM;
+window.pauseAllBgm = pauseAllBgm;
+window.resumeCurrentBgm = resumeCurrentBgm;
