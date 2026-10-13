@@ -1,0 +1,60 @@
+{
+  "$schema": "https://bridge.playgama.com/v2/stable/schema.json",
+  "device": {
+    "useBuiltInOrientationPopup": true,
+    "supportedOrientations": [
+      "portrait",
+      "landscape"
+    ]
+  },
+  "advertisement": {
+    "minimumDelayBetweenInterstitial": 60,
+    "interstitial": {
+      "preloadOnStart": "level_completed",
+      "placementFallback": "level_completed",
+      "placements": [
+        {
+          "id": "level_completed"
+        },
+        {
+          "id": "game_over"
+        }
+      ]
+    },
+    "rewarded": {
+      "preloadOnStart": "store_bonus",
+      "placementFallback": "store_bonus",
+      "placements": [
+        {
+          "id": "store_bonus"
+        },
+        {
+          "id": "revive"
+        }
+      ]
+    },
+    "banner": {
+      "placementFallback": "main_menu",
+      "placements": [
+        {
+          "id": "main_menu"
+        }
+      ]
+    },
+    "useBuiltInErrorPopup": true
+  },
+  "saas": {
+    "publicToken": "cmv6qrlxd0132j10hpaimh623",
+    "leaderboards": {
+      "platforms": [
+        "playgama"
+      ]
+    }
+  },
+  "leaderboards": [
+    {
+      "id": "leaderboard1",
+      "isMain": true
+    }
+  ]
+}
